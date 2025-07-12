@@ -12,7 +12,13 @@ chrome.action.onClicked.addListener(function(tab) {
 chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
         id: "etsy-love-cannon",
-        title: "Favorite/Unfavorite All",
+        title: "Favorite/Unfavorite All (Toggle)",
+        contexts: ["action"]
+    });
+    
+    chrome.contextMenus.create({
+        id: "favorite-all",
+        title: "Favorite All Items",
         contexts: ["action"]
     });
     
@@ -44,6 +50,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         chrome.scripting.executeScript({
             target: { tabId: tab.id },
             files: ['send_links.js']
+        });
+    } else if (info.menuItemId === "favorite-all") {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['favorite_all.js']
         });
     } else if (info.menuItemId === "clear-all-favorites") {
         chrome.scripting.executeScript({
