@@ -89,7 +89,7 @@ function filterLinks() {
 // Add links to allLinks and visibleLinks, sort and show them.  send_links.js is
 // injected into all frames of the active tab, so this listener may be called
 // multiple times.
-chrome.extension.onRequest.addListener(function(links) {
+chrome.runtime.onMessage.addListener(function(links) {
   for (var index in links) {
     allLinks.push(links[index]);
   }
@@ -107,11 +107,10 @@ window.onload = function() {
   document.getElementById('download0').onclick = downloadCheckedLinks;
   document.getElementById('download1').onclick = downloadCheckedLinks;
 
-  chrome.windows.getCurrent(function (currentWindow) {
-    chrome.tabs.query({active: true, windowId: currentWindow.id},
-                      function(activeTabs) {
-      chrome.tabs.executeScript(
-        activeTabs[0].id, {file: 'send_links.js', allFrames: true});
+  chrome.tabs.query({active: true, currentWindow: true}, function(activeTabs) {
+    chrome.scripting.executeScript({
+      target: { tabId: activeTabs[0].id, allFrames: true },
+      files: ['send_links.js']
     });
   });
 };
